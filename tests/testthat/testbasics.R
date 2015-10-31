@@ -29,28 +29,37 @@ test_that("multiDist calculated at lambda equals multiDist function evaluated at
   })
 
 ############################
-# test that functions match as they should
+# test that functions match as they should, including when tips are emphasised
 ############################
 
 test_that("treeDist equals Euclidean distance between corresponding vectors", {
   expect_equal(treeDist(tree_a,tree_b), sqrt(sum((treeVec(tree_a) - treeVec(tree_b))^2)))
+  expect_equal(treeDist(tree_a,tree_b,emphasise.tips = c("t1","t2")), sqrt(sum((treeVec(tree_a,emphasise.tips = c("t1","t2")) - treeVec(tree_b,emphasise.tips = c("t1","t2")))^2)))
   })
 
 test_that("treeDist equals corresponding entry of multiDist", {
   expect_equal(treeDist(trees[[1]],trees[[2]]), multiDist(trees)[[1]])
+  expect_equal(treeDist(trees[[1]],trees[[2]],emphasise.tips = c("t1","t2")), multiDist(trees,emphasise.tips = c("t1","t2"))[[1]])
   })
 
 test_that("multiDist equals the distance matrix from treescape", {
   treedistMatrix <- treescape(trees,nf=2)$D
-  expect_equal(multiDist(trees)[[n]],treedistMatrix[[n]])
+  treedistMatrix0.5 <- treescape(trees,nf=2,lambda=l)$D 
+  multidistMatrixFunction <- multiDist(trees,return.lambda.function=TRUE)
+  expect_equal(multidistMatrixFunction(0)[[n]],treedistMatrix[[n]])
+  expect_equal(multidistMatrixFunction(l)[[n]],treedistMatrix0.5[[n]])
+  expect_equal(treescape(trees,nf=2,emphasise.tips=c("t1","t2"))$D[[n]],multiDist(trees,emphasise.tips=c("t1","t2"))[[n]])
   })
 
-## !! this one no longer works as $median is now $trees
-## test_that("medTree results are consistent with treeVec", {
-##   geom <- medTree(trees)
-##   expect_equal(geom$mindist,sqrt(sum((geom$centre - treeVec(trees[[geom$median[[1]]]]))^2))) # mindist, centre and median are internally consistent, and consistent with treeVec
-##   expect_equal(geom$mindist,geom$distances[[geom$median[[1]]]]) # mindist equals the entry in `distances' corresponding to the (first) median tree
-##  })
+test_that("medTree results are consistent with treeVec", {
+   geom <- medTree(trees)
+   expect_equal(geom$mindist,sqrt(sum((geom$centre - treeVec(geom$trees[[1]]))^2))) # mindist, centre and median are internally consistent, and consistent with treeVec
+   expect_equal(geom$mindist,min(geom$distances)) # mindist equals the minimum entry in `distances' 
+  })
+
+test_that("medTree results are consistent whether the trees or their vectors are supplied", {
+   expect_equal(medTree(trees)$mindist,medTree(treescape(trees,nf=2, return.tree.vectors = TRUE)$vectors)$mindist)
+  })
 
 ############################
 # test that save_memory versions match non-save_memory versions
@@ -86,6 +95,7 @@ test_that("error is given if input is not of class phylo / multiphylo", {
   expect_error(treeDist(trees))
   expect_error(multiDist(tree_a))
   expect_error(medTree(tree_a))
+  expect_error(findGroves(tree_a))
   })
 
 test_that("error is given if input tree is unrooted", {
@@ -96,7 +106,6 @@ test_that("error is given if input tree is unrooted", {
 test_that("warning is given if tree edge lengths are not defined, then they are set to 1", {
   newicktree <- read.tree(text="((A,B),C);") # a tree without defined edge lengths
   expect_warning(treeVec(newicktree))
-  expect_equal(treeVec(newicktree),c(1,0,0,1,1,1))
   })
 
 test_that("error is given if trees have different tip labels", {

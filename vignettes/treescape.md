@@ -1,7 +1,7 @@
 ---
 title: "Exploration of landscapes of phylogenetic trees"
 author: "Thibaut Jombart, Michelle Kendall"
-date: "2015-08-31"
+date: "2015-10-28"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
@@ -61,51 +61,13 @@ Distributed datasets include:
 Exploring trees with *treescape*
 --------------
 
-We first load *treescape*, and packages required for graphics:
+We first load *treescape*, and the packages required for graphics:
 
 ```r
 library("treescape")
 library("ade4")
 library("adegenet")
-```
-
-```
-## 
-##    /// adegenet 2.0.0 is loaded ////////////
-## 
-##    > overview: '?adegenet'
-##    > tutorials/doc/questions: 'adegenetWeb()' 
-##    > bug reports/feature resquests: adegenetIssues()
-## 
-## 
-## 
-## Attaching package: 'adegenet'
-## 
-## The following object is masked from 'package:treescape':
-## 
-##     .render.server.info
-```
-
-```r
 library("adegraphics")
-```
-
-```
-## 
-## Attaching package: 'adegraphics'
-## 
-## The following objects are masked from 'package:ade4':
-## 
-##     kplotsepan.coa, s.arrow, s.class, s.corcircle, s.distri,
-##     s.image, s.label, s.logo, s.match, s.traject, s.value,
-##     table.value, triangle.class
-## 
-## The following object is masked from 'package:ape':
-## 
-##     zoom
-```
-
-```r
 library("ggplot2")
 ```
 
@@ -293,7 +255,6 @@ xlab("") + ylab("") + theme_bw(base_family="") # remove axis labels and grey bac
 
 <img src="figs/woodmicePlots-5.png" title="plot of chunk woodmicePlots" alt="plot of chunk woodmicePlots" width="400px" />
 
-
 Note that alternatively, the function `multiDist` simply performs the pairwise comparison of trees and outputs a distance matrix. 
 This function may be preferable for large datasets, and when principal co-ordinate analysis is not required. 
 It includes an option to save memory at the expense of computation time.
@@ -314,10 +275,10 @@ One simple approach is:
 
 4. cut the dendrogram to obtain clusters
  
-In *treescape*, the function `findGroves` implements this approach, offering various clustering options (see `?findGroves`):
+In *treescape*, the function `findGroves` implements this approach, offering various clustering options (see `?findGroves`). Here we supply the function with our `treescape` output `wm.res` since we have already calculated it, but it is also possible to skip the steps above and directly supply `findGroves` with a multiPhylo list of trees.
 
 ```r
-wm.groves <- findGroves(woodmiceTrees, nf=3, nclust=6)
+wm.groves <- findGroves(wm.res, nclust=6)
 names(wm.groves)
 ```
 
@@ -361,14 +322,18 @@ plotGroves(wm.groves, bg="black", col.pal=lightseasun, lab.show=TRUE, lab.col="w
 
 `treescapeServer`: a web application for *treescape*
 --------------
-The essential functionalities of `treescape` are also available via a user-friendly web interface, running locally on the default web browser.
+The functionalities of `treescape` are also available via a user-friendly web interface, running locally on the default web browser.
 It can be started by simply typing `treescapeServer()`.
-The interface allows one to import data, run `treescape` to explore the tree space, look for clusters using `findGroves`, customize MDS plots, visualise specific trees and save results in various formats.
+The interface allows you to import trees and run `treescape` to view and explore the tree space in 2 or 3 dimensions.
+It is then straightforward to analyse the tree space by varying lambda, looking for clusters using `findGroves` and saving results in various formats.
+Individual trees can be easily viewed including median trees per cluster, and collections of trees can be seen together using `densiTree` from the package `phangorn`.
 It is fully documented in the *help* tab.
 
-![example of treescapeServer running](figs/server.png) 
+![example of treescapeServer 3d](figs/treescape3d.png) 
 
+![example of treescapeServer tree](figs/treescapeTree.png)
 
+![example of treescapeServer densiTree](figs/treescapeDensiTree.png)
 
 
 Finding median trees
@@ -394,13 +359,10 @@ However, a more complete and accurate summary of the data can be given by findin
 This is achieved using the `groups` argument of `medTree`:
 
 ```r
-## identify 6 clusters
-groves <- findGroves(woodmiceTrees, nf=3, nclust=6)
+## find median trees for the 6 clusters identified earlier:
+res <- medTree(woodmiceTrees, wm.groves$groups)
 
-## find median trees
-res <- medTree(woodmiceTrees, groves$groups)
-
-## there isone output per cluster
+## there is one output per cluster
 names(res)
 ```
 
@@ -422,7 +384,35 @@ for(i in 1:length(med.trees)) plot(med.trees[[i]], main=paste("cluster",i),cex=1
 These trees exhibit a number of topological differences, e.g. in the placement of the **(1007S,1208S,0909S)** clade. 
 Performing this analysis enables the detection of distinct representative trees supported by data.
 
+Note that we supplied the function `medTree` with the multiPhylo list of trees. A more computationally efficient process (at the expense of using more memory) is to use the option `return.tree.vectors` in the initial `treescape` call, and then supply these vectors directly to `medTree`.
+In this case, the tree indices are returned by `medTree` but the trees are not (since they were not supplied).
 
+Emphasising the placement of certain tips or clades
+--------------
+
+In some analyses it may be informative to emphasise the placement of particular tips or clades within a set of trees. This can be particularly useful in large trees where the study is focused on a smaller clade. Priority can be given to a list of tips using the argument `emphasise.tips`, whose corresponding values in the vector comparison will be given a weight of `emphasise.weight` times the others (the default is 2, i.e. twice the weight).
+
+For example, if we wanted to emphasise where the woodmice trees agree and disagree on the placement of the **(1007S,1208S,0909S)** clade, we can simply emphasise that clade as follows: 
+
+```r
+wm3.res <- treescape(woodmiceTrees,nf=2,emphasise.tips=c("No1007S","No1208S","No0909S"),emphasise.weight=3)
+
+## plot results
+plotGroves(wm3.res$pco, lab.show=TRUE, lab.optim=FALSE)
+```
+
+<img src="figs/woodmice-tip-emphasis-1.png" title="plot of chunk woodmice-tip-emphasis" alt="plot of chunk woodmice-tip-emphasis" width="400px" />
+
+It can be seen from the scale of the plot and the density of clustering that the trees are now separated into more distinct clusters.
+
+```r
+wm3.groves <- findGroves(woodmiceTrees,nf=3,nclust=6,emphasise.tips=c("No1007S","No1208S","No0909S"),emphasise.weight=3)
+plotGroves(wm3.groves, type="ellipse")
+```
+
+<img src="figs/findgroves-with-emphasis-1.png" title="plot of chunk findgroves-with-emphasis" alt="plot of chunk findgroves-with-emphasis" width="400px" />
+
+Conversely, where the structure of a particular clade is not of interest (for example, lineages within an outgroup which was only included for rooting purposes), those tips can be given a weight less than 1 so as to give them less emphasis in the comparison. We note that although it is possible to give tips a weighting of 0, we advise caution with this as the underlying function will no longer be guaranteed to be a metric. That is, a distance of 0 between two trees will no longer necessarily imply that the trees are identical. In most cases it would be wiser to assign a very small weighting to tips which are not of interest.
 
 Method: characterising a tree by a vector
 --------------

@@ -4,12 +4,23 @@
 #' This function opens up an application in a web browser for an interactive exploration of the diversity in a set of trees. 
 #'
 #' @author Thibaut Jombart \email{thibautjombart@@gmail.com}
+#' @author Michelle Kendall \email{michelle.louise.kendall@@gmail.com}
 #'
-#' @export
+#' @import ape
+
 #' @import shiny
+#' @importFrom ade4 dudi.pco
 #' @importFrom adephylo distTips
+#' @importFrom adegraphics s.class 
+#' @importFrom adegraphics s.label 
+#' @importFrom adegraphics s1d.barchart
+#' @importFrom phangorn Children
+#' @importFrom phangorn Descendants
 #' @importFrom utils packageDescription
 #' @importFrom RLumShiny jscolorInput
+#' 
+#' 
+#' @export
 treescapeServer <- function(){
     ## RUN APP
     runApp(system.file("shiny",package="treescape"))
@@ -27,10 +38,10 @@ treescapeServer <- function(){
 #'
 #' @author Thibaut Jombart \email{thibautjombart@@gmail.com}
 #'
-#' @export
 #'
 #' @importFrom adegenet .readExt
 #'
+#' @export
 .render.server.info <- function(){
     renderPrint(
             {
