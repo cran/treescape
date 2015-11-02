@@ -1,6 +1,6 @@
 Package: treescape
 Title: Statistical Exploration of Landscapes of Phylogenetic Trees
-Version: 1.8.14
+Version: 1.8.15
 Authors@R: c(TJ=person("Thibaut", "Jombart", email="thibaut.jombart@gmail.com", role = c("aut")),
      MK=person("Michelle", "Kendall", email="m.kendall@imperial.ac.uk", role = c("aut", "cre")),
 	   JAG=person("Jacob", "Almagro-Garcia", role = c("aut")),	
@@ -11,7 +11,7 @@ Description: Tools for the exploration of distributions of phylogenetic trees.
     'treescapeServer()'.
 Depends: R (>= 3.1.2), ape, ade4
 Imports: adephylo, shiny, RLumShiny, utils, adegenet, adegraphics,
-        combinat, compiler, phangorn, Rcpp
+        combinat, compiler, phangorn, Rcpp, shinyBS, shinyRGL
 LinkingTo: Rcpp
 Suggests: RColorBrewer, ggplot2, rgl, testthat
 License: GPL (>= 2)
@@ -20,10 +20,10 @@ Collate: RcppExports.R metrics.R medTree.R treescape.R findGroves.R
         plotGroves.R servers.R
 RoxygenNote: 5.0.0
 NeedsCompilation: yes
-Packaged: 2015-10-30 12:38:21 UTC; Michelle
+Packaged: 2015-11-02 12:51:44 UTC; Michelle
 Author: Thibaut Jombart [aut],
   Michelle Kendall [aut, cre],
   Jacob Almagro-Garcia [aut],
   Caroline Colijn [aut]
 Repository: CRAN
-Date/Publication: 2015-10-31 00:23:19
+Date/Publication: 2015-11-02 18:56:03
