@@ -1,25 +1,35 @@
 #'
 #' Web-based tree explorer
 #'
-#' This function opens up an application in a web browser for an interactive exploration of the diversity in a set of trees. 
+#' This function opens up an application in a web browser for an interactive exploration of the diversity in a set of trees.
+#' For further details please see the "help" tab within the application.
+#' 
+#' @seealso For convenience, \code{treescapeServer} is also available as a separate web app which can be used from any browser (it is not necessary to have \R installed): {\url{http://shiny.imperial-stats-experimental.co.uk/users/mlkendal/treescape/}} 
 #'
 #' @author Thibaut Jombart \email{thibautjombart@@gmail.com}
 #' @author Michelle Kendall \email{michelle.louise.kendall@@gmail.com}
 #'
 #' @import ape
 
+#' @import scatterD3
 #' @import shiny
+#' @import rglwidget
 #' @importFrom ade4 dudi.pco
-#' @importFrom adephylo distTips
+#' @importFrom adegraphics s1d.barchart 
 #' @importFrom adegraphics s.class 
-#' @importFrom adegraphics s.label 
-#' @importFrom adegraphics s1d.barchart
+#' @importFrom adegraphics s.label
+#' @importFrom adephylo distTips
+#' @importFrom distory dist.multiPhylo
+#' @importFrom fields rdist
+#' @importFrom htmlwidgets saveWidget
+#' @importFrom MASS Shepard
 #' @importFrom phangorn Children
 #' @importFrom phangorn Descendants
-#' @importFrom utils packageDescription
+#' @importFrom rgl writeWebGL
 #' @importFrom RLumShiny jscolorInput
 #' @importFrom shinyBS bsTooltip
-#' @importFrom shinyRGL webGLOutput
+#' @importFrom utils packageDescription
+#' 
 #' 
 #' 
 #' @export
