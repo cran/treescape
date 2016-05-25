@@ -1,6 +1,6 @@
 Package: treescape
 Title: Statistical Exploration of Landscapes of Phylogenetic Trees
-Version: 1.8.16
+Version: 1.9.16
 Authors@R: c(TJ=person("Thibaut", "Jombart", email="thibaut.jombart@gmail.com", role = c("aut")),
  	     MK=person("Michelle", "Kendall", email="m.kendall@imperial.ac.uk", role = c("aut", "cre")),
 	     JAG=person("Jacob", "Almagro-Garcia", role = c("aut")),
@@ -18,14 +18,14 @@ Suggests: RColorBrewer, ggplot2, testthat, knitr, rmarkdown
 License: GPL (>= 2)
 LazyData: true
 Collate: RcppExports.R metrics.R medTree.R treescape.R findGroves.R
-        plotGroves.R servers.R data.R
+        plotGroves.R plotTreeDiff.R servers.R data.R
 RoxygenNote: 5.0.1
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2016-04-01 12:18:55 UTC; Michelle
+Packaged: 2016-05-25 15:20:59 UTC; Michelle
 Author: Thibaut Jombart [aut],
   Michelle Kendall [aut, cre],
   Jacob Almagro-Garcia [aut],
   Caroline Colijn [aut]
 Repository: CRAN
-Date/Publication: 2016-04-01 16:35:22
+Date/Publication: 2016-05-25 18:13:40
