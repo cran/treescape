@@ -2,7 +2,6 @@ options(rgl.useNULL=TRUE)
 ## CHECKS ##
 if(!require("scatterD3")) stop("package scatterD3 is required")
 if(!require("shiny")) stop("package shiny is required")
-if(!require("rglwidget")) stop("package rglwidget is required")
 if(!require("rgl")) stop("package rgl is required")
 if(!require("RLumShiny")) stop("package RLumShiny is required")
 if(!require("shinyBS")) stop("package shinyBS is required")
@@ -67,6 +66,7 @@ shinyUI(
                                                          "Billera, Holmes, Vogtmann (rooted, uses branch lengths)" = "BHV",
                                                          "Kuhner & Felsenstein branch score distance (unrooted, uses branch lengths)" = "KF",
                                                          "Robinson Foulds symmetric difference (unrooted, topological)" = "RF",
+                                                         "Weighted Robinson Foulds (unrooted, uses branch lengths)" = "wRF",
                                                          "Steel & Penny tip-tip distance (unrooted, topological)" = "nNodes",
                                                          "Steel & Penny weighted tip-tip distance (unrooted, uses branch lengths)" = "patristic",
                                                          "Abouheif test (rooted, topological)" = "Abouheif",
@@ -495,15 +495,33 @@ shinyUI(
                                                             ),
                                                             
                                                             conditionalPanel(condition="input.treePlotType==2",
+                                                                             
+                                                                             selectInput("colourMethod", "Colouring method", 
+                                                                                         choices=c("Gradual colour ramp"=1,"Palette from adegenet"=2),
+                                                                                         selected=1),
+                                                                             
                                                                              ## basic tip label colour
                                                                              jscolorInput("basetiplabelcolour", "Label colour for tips with same ancestry", value="#BEBEBE", close=TRUE),
                                                                              
-                                                                             ## basic tip label colour
-                                                                             jscolorInput("minortiplabelcolour", "Label colour for tips with smaller ancestral differences", value="#FFDAB9", close=TRUE),
+                                                                             conditionalPanel(condition="input.colourMethod==1",
+                                                                                              ## basic tip label colour
+                                                                                              jscolorInput("minortiplabelcolour", "Label colour for tips with smaller ancestral differences", value="#FFDAB9", close=TRUE),
+                                                                                              
+                                                                                              ## basic tip label colour
+                                                                                              jscolorInput("majortiplabelcolour", "Label colour for tips with greater ancestral differences", value="#EE0000", close=TRUE)
+                                                                                              ),
                                                                              
-                                                                             ## basic tip label colour
-                                                                             jscolorInput("majortiplabelcolour", "Label colour for tips with greater ancestral differences", value="#EE0000", close=TRUE)
-                                                                             )
+                                                                             conditionalPanel(condition="input.colourMethod==2",
+                                                                                              selectInput("tipPalette", "Palette",
+                                                                                                          choices=c("funky"=1, "spectral"=2,
+                                                                                                                    "seasun"=3, "lightseasun"=4, "deepseasun"=5,
+                                                                                                                    "rainbow"=6, "azur"=7, "wasp"=8),
+                                                                                                          selected=2)
+                                                                                              
+                                                                                              )
+                                                                             
+                                                                             
+                                                                          )
                                                             
                                                             
                                            ),

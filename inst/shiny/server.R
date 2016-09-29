@@ -333,7 +333,7 @@ shinyServer(function(input, output, session) {
     
     ## select method used to summarise tree
     if(!is.null(TM)){
-      if(TM %in% c("BHV","KF","RF","patristic","nNodes","Abouheif","sumDD")){
+      if(TM %in% c("BHV","KF","RF","wRF","patristic","nNodes","Abouheif","sumDD")){
         ## run treescape (suppress warnings about rootedness etc.)
         res <- suppressWarnings(treescape(x, method=TM, nf=naxes))
       } 
@@ -715,8 +715,8 @@ shinyServer(function(input, output, session) {
   # 3d output
   output$treescapePlot3D <- renderRglwidget({
     validate(
-      need(packageVersion("rglwidget")>='0.1.1433',
-           paste0("You are running version ",packageVersion("rglwidget")," of the package rglwidget, which contains a bug for 3D plotting. Please update to the latest version by running: install.packages('rglwidget', repos='http://R-Forge.R-project.org')")
+      need(packageVersion("rgl")>='0.96.0',
+           paste0("You are running version ",packageVersion("rgl")," of the package rgl, which may not contain all the necessary features for 3D plotting (which are based on the old, separate rglwidget package). Please update to the latest version.")
       ))
     plot <- getPlot3d()
     plot
@@ -984,6 +984,10 @@ shinyServer(function(input, output, session) {
     tr1 <- getTree1()
     tr2 <- getTree2()
     tipDiff <- getTipDiff()
+    CM <- c("ramp","palette")[[as.numeric(input$colourMethod)]]
+    tipPal <- c(funky, spectral, seasun, lightseasun, deepseasun,
+                rainbow, azur, wasp)[[as.numeric(input$tipPalette)]]
+    
     if(!is.null(tr1)&&!is.null(tr2)){
       
       ## plot tree comparison ##
@@ -993,6 +997,8 @@ shinyServer(function(input, output, session) {
                    baseCol=input$basetiplabelcolour,
                    col1=input$minortiplabelcolour,
                    col2=input$majortiplabelcolour,
+                   colourMethod=CM,
+                   palette=tipPal,
                    type=input$treetype,
                    use.edge.length=as.logical(input$edgelengths),
                    show.tip.lab=input$showtiplabels, 

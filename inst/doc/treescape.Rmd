@@ -76,7 +76,7 @@ Distributed datasets include:
 
 * __`woodmiceTrees`__: illustrative set of 201 trees built using the neighbour-joining and bootstrapping example from the woodmice dataset in the ape documentation.
 
-* __`DengueTrees`__: 500 trees sampled from a BEAST posterior set of trees from (Drummond & Rambaut, 2007)
+* __`DengueTrees`__: 500 trees sampled from a BEAST posterior set of trees from (Drummond and Rambaut, 2007)
 
 * __`DengueSeqs`__: 17 dengue virus serotype 4 sequences from (Lanciotti *et al*., 1997), from which the `DengueTrees` were inferred.
 
@@ -97,9 +97,9 @@ library("rgl")
 
 The function `treescape` defines typologies of phylogenetic trees using a two-step approach:
 
-1. perform pairwise comparisons of trees using various (Euclidean) metrics; by default, the comparison uses the Kendall and Colijn metric (Kendall & Colijn, 2015) which is described in more detail below; other metrics rely on tips distances implemented in *adephylo* (Jombart *et al.*, 2010).
+1. perform pairwise comparisons of trees using various (Euclidean) metrics; by default, the comparison uses the Kendall and Colijn metric (Kendall and Colijn, 2016) which is described in more detail below; other metrics rely on tip distances implemented in *adephylo* (Jombart *et al.*, 2010) and *phangorn* (Schliep 2011).
 
-2. use Metric Multidimensional Scaling (MDS, aka Principal Coordinates Analysis, PCoA) to summarise pairwise distances between the trees as well as possible into a few dimensions; the output of the MDS is typically visualised using scatterplots of the first few Principal Components (PCs); this step relies on the PCoA implemented in *ade4* (Dray & Dufour, 2007).
+2. use Metric Multidimensional Scaling (MDS, aka Principal Coordinates Analysis, PCoA) to summarise pairwise distances between the trees as well as possible into a few dimensions; the output of the MDS is typically visualised using scatterplots of the first few Principal Components (PCs); this step relies on the PCoA implemented in *ade4* (Dray and Dufour, 2007).
 
 The function `treescape` performs both tasks, returning both the matrix of pairwise tree comparisons (`$D`), and the PCoA (`$pco`).
 This can be illustrated using randomly generated trees:
@@ -268,7 +268,7 @@ To examine the differences between the trees in a pairwise manner, we can use th
 # Compare median trees from clusters 1 and 2:
 plotTreeDiff(med.trees[[1]],med.trees[[2]], use.edge.length=FALSE)
 # Compare median trees from clusters 1 and 4, and change aesthetics:
-plotTreeDiff(med.trees[[1]],med.trees[[4]], type="cladogram", use.edge.length=FALSE, edge.width=2, col1="cyan", col2="navy")
+plotTreeDiff(med.trees[[1]],med.trees[[4]], type="cladogram", use.edge.length=FALSE, edge.width=2, colourMethod="palette",palette=spectral)
 ```
 
 Performing this analysis enables the detection of distinct representative trees supported by data.
@@ -299,7 +299,13 @@ Conversely, where the structure of a particular clade is not of interest (for ex
 
 Method: characterising a tree by a vector
 --------------
-Kendall and Colijn proposed a [metric](http://arxiv.org/abs/1507.05211) for comparing rooted phylogenetic trees (Kendall & COlijn, 2015). Each tree is characterised by a vector which notes the placement of the most recent common ancestor (MRCA) of each pair of tips. Specifically, it records the distance between the MRCA of a pair of tips $(i,j)$ and the root in two ways: the number of edges $m_{i,j}$, and the path length $M_{i,j}$. It also records the length $p_i$ of each 'pendant' edge between a tip $i$ and its immediate ancestor. This procedure results in two vectors for a tree $T$:
+Kendall and Colijn proposed a [metric](http://dx.doi.org/10.1093/molbev/msw124) for comparing rooted phylogenetic trees (Kendall and COlijn, 2016). Each tree is characterised by a vector which notes the placement of the most recent common ancestor (MRCA) of each pair of tips, as demonstrated in this example:
+
+```{r figure_construction, echo=FALSE, out.width="650px", fig.retina = NULL}
+knitr::include_graphics("figs/construction.png")
+```
+
+Specifically, it records the distance between the MRCA of a pair of tips $(i,j)$ and the root in two ways: the number of edges $m_{i,j}$, and the path length $M_{i,j}$. It also records the length $p_i$ of each 'pendant' edge between a tip $i$ and its immediate ancestor. This procedure results in two vectors for a tree $T$:
 
 $$
 m(T) = (m_{1,2}, m_{1,3},...,m_{k-1,k},1,...,1)
@@ -355,19 +361,21 @@ treeDist(tree_a,tree_b,1)
 References
 --------------
 
-* Dray S & Dufour AB (2007) The ade4 package: implementing the duality diagram for ecologists. Journal of Statistical Software 22(4): 1-20.
+* Dray, S. and Dufour, A. B. (2007) The ade4 package: implementing the duality diagram for ecologists. Journal of Statistical Software 22(4): 1-20.
 
-* Drummond, A. J., and Rambaut, A. (2007) 
+* Drummond, A. J. and Rambaut, A. (2007) 
 BEAST: Bayesian evolutionary analysis by sampling trees.
 BMC Evolutionary Biology, 7(1), 214.
 
-* Jombart R, Balloux F & Dray S (2010) adephylo: new tools for investigating the phylogenetic signal in biological traits. Bioinformatics 26: 1907-1909. Doi: 10.1093/bioinformatics/btq292
+* Jombart, T., Balloux, F. and Dray, S. (2010) adephylo: new tools for investigating the phylogenetic signal in biological traits. Bioinformatics 26: 1907-1909. DOI: 10.1093/bioinformatics/btq292
 
-* Kendall M & Colijn C (Preprint 2015) A tree metric using structure and length to capture distinct phylogenetic signals. arXiv 1507.05211
+* Kendall, M. and Colijn, C. (2016) Mapping phylogenetic trees to reveal distinct patterns of evolution. Molecular Biology and Evolution, first published online: June 24, 2016. DOI: 10.1093/molbev/msw124
 
-* Lanciotti, R. S., Gubler, D. J., and Trent, D. W. (1997)
+* Lanciotti, R. S., Gubler, D. J. and Trent, D. W. (1997)
 Molecular evolution and phylogeny of dengue-4 viruses.
 Journal of General Virology, 78(9), 2279-2286.
+
+* Schliep, K. P. (2011) phangorn: phylogenetic analysis in R. Bioinformatics 27(4): 592-593. 
 
 
 Authors / Contributors
