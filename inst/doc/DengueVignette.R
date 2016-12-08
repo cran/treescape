@@ -52,13 +52,16 @@ plot(DfitTreeRooted)
 DMLboots <- bootstrap.pml(Dfit, optNni=TRUE)
 # root:
 DMLbootsrooted <- lapply(DMLboots, function(x) root(x, resolve.root=TRUE, outgroup="D4Thai63"))
+class(DMLbootsrooted) <- "multiPhylo"
+
 
 ## ----see_ML_boots--------------------------------------------------------
 plotBS(DfitTreeRooted, DMLboots, type="phylogram")
 
 ## ----run_treescape-------------------------------------------------------
 # collect the trees into a single object of class multiPhylo:
-DengueTrees <- c(BEASTtrees,Dnjboots$trees,DMLbootsrooted,list(DnjRooted),list(DfitTreeRooted))
+DengueTrees <- c(BEASTtrees, Dnjboots$trees, DMLbootsrooted,
+		             DnjRooted, DfitTreeRooted)
 class(DengueTrees) <- "multiPhylo"
 # add tree names:
 names(DengueTrees)[1:200] <- paste0("BEAST",1:200)
@@ -172,7 +175,7 @@ treeDist(BEASTrep,randomBEASTtree)
 # load the MCC tree
 data(DengueBEASTMCC)
 # concatenate with other BEAST trees
-BEAST201 <- c(BEASTtrees,list(DengueBEASTMCC))
+BEAST201 <- c(BEASTtrees, DengueBEASTMCC)
 # compare using treescape:
 BEASTscape <- treescape(BEAST201, nf=5)
 # simple plot:
@@ -180,7 +183,7 @@ plotGrovesD3(BEASTscape$pco)
 
 ## ----BEASTtrees_clusters-------------------------------------------------
 # find clusters or 'groves':
-BEASTGroves <- findGroves(BEASTscape,nclust=4,clustering="single")
+BEASTGroves <- findGroves(BEASTscape, nclust=4, clustering = "single")
 
 ## ----BEASTtrees_meds-----------------------------------------------------
 # find median tree(s) per cluster:
